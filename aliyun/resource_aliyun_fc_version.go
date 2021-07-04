@@ -5,6 +5,7 @@ import (
 	"github.com/aliyun/fc-go-sdk"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"strings"
 )
 
 func resourceAliyunFCVersion() *schema.Resource {
@@ -40,7 +41,9 @@ func resourceAliyunFCVersionDelete(_ context.Context, d *schema.ResourceData, m 
 	})
 
 	if err != nil {
-		return diag.FromErr(err)
+		if !strings.Contains(err.Error(), "\"HttpStatus\": 404,") {
+			return diag.FromErr(err)
+		}
 	}
 
 	d.SetId("")
@@ -96,12 +99,10 @@ func resourceAliyunFCVersionRead(_ context.Context, d *schema.ResourceData, m in
 
 	versions := v.Versions
 
-	if len(versions) != 1 {
-		return diag.Errorf("get version error")
-	}
-
-	if err := d.Set("description", versions[0].Description); err != nil {
-		return diag.FromErr(err)
+	if len(versions) == 1 {
+		if err := d.Set("description", versions[0].Description); err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	return diags
