@@ -1,1 +1,1 @@
-# terraform-provider-alicloud
+# terraform-provider-aliyun

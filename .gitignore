@@ -1,0 +1,10 @@
+.DS_Store
+
+.idea/
+
+bin/
+.terraform
+.terraform.lock.hcl
+terraform.tfplan
+terraform.tfstate*
+terraform.tfvars
