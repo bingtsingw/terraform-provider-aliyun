@@ -11,6 +11,7 @@ func resourceAliyunFCVersion() *schema.Resource {
 	return &schema.Resource{
 		ReadContext:   resourceAliyunFCVersionRead,
 		CreateContext: resourceAliyunFCVersionCreate,
+		DeleteContext: resourceAliyunFCVersionDelete,
 
 		Schema: map[string]*schema.Schema{
 			"service_name": {
@@ -21,25 +22,48 @@ func resourceAliyunFCVersion() *schema.Resource {
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 			},
 		},
 	}
 }
 
+func resourceAliyunFCVersionDelete(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+	conn := m.(Client).fcconn
+	id := d.Id()
+	serviceName := d.Get("service_name").(string)
+
+	_, err := conn.DeleteServiceVersion(&fc.DeleteServiceVersionInput{
+		ServiceName: &serviceName,
+		VersionID:   &id,
+	})
+
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.SetId("")
+
+	return diags
+}
+
 func resourceAliyunFCVersionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	conn := m.(Client).fcconn
+	serviceName := d.Get("service_name").(string)
 
 	input := fc.PublishServiceVersionInput{
-		ServiceName: d.Get("service_name").(*string),
+		ServiceName: &serviceName,
 	}
 
 	if description, ok := d.GetOk("description"); ok {
-		input.Description = description.(*string)
+		desc := description.(string)
+		input.Description = &desc
 	}
 
 	v, err := conn.PublishServiceVersion(&fc.PublishServiceVersionInput{
-		ServiceName: d.Get("service_name").(*string),
+		ServiceName: &serviceName,
 	})
 
 	if err != nil {
@@ -58,9 +82,10 @@ func resourceAliyunFCVersionRead(_ context.Context, d *schema.ResourceData, m in
 	conn := m.(Client).fcconn
 	id := d.Id()
 	var limit int32 = 1
+	serviceName := d.Get("service_name").(string)
 
 	v, err := conn.ListServiceVersions(&fc.ListServiceVersionsInput{
-		ServiceName: d.Get("service_name").(*string),
+		ServiceName: &serviceName,
 		StartKey:    &id,
 		Limit:       &limit,
 	})

@@ -19,10 +19,11 @@ const (
 const DefaultClientRetryCountSmall = 5
 
 type Config struct {
-	AccessKey  string
-	SecretKey  string
-	Region     Region
-	RegionId   string
+	AccessKey string
+	SecretKey string
+	Region    Region
+	RegionId  string
+	AccountID string
 }
 
 func (c *Config) Client() Client {
@@ -59,7 +60,7 @@ func (c *Config) getTransport() *http.Transport {
 }
 
 func (c *Config) newFcClient() (*fc.Client, error) {
-	endpoint := fmt.Sprintf("https://%s.fc.aliyuncs.com", c.RegionId)
+	endpoint := fmt.Sprintf("https://%s.%s.fc.aliyuncs.com", c.AccountID, c.RegionId)
 
 	fcconn, err := fc.NewClient(endpoint, string(ApiVersion20160815), c.AccessKey, c.SecretKey)
 

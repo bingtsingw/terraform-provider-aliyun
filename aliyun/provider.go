@@ -21,6 +21,11 @@ func Provider() *schema.Provider {
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ALIYUN_SECRET_KEY", os.Getenv("ALIYUN_SECRET_KEY")),
 			},
+			"account_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ALIYUN_ACCOUNT_ID", os.Getenv("ALIYUN_ACCOUNT_ID")),
+			},
 			"region": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -42,6 +47,7 @@ func providerConfigure(_ context.Context, d *schema.ResourceData) (interface{}, 
 		SecretKey: strings.TrimSpace(d.Get("secret_key").(string)),
 		RegionId:  strings.TrimSpace(d.Get("region").(string)),
 		Region:    Region(strings.TrimSpace(d.Get("region").(string))),
+		AccountID: strings.TrimSpace(d.Get("account_id").(string)),
 	}
 
 	return config.Client(), nil
