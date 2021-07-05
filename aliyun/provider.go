@@ -34,6 +34,7 @@ func Provider() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"aliyun_fc_version": resourceAliyunFCVersion(),
+			"aliyun_fc_trigger": resourceAliyunFCTrigger(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
