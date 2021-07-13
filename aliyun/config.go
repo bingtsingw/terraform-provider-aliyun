@@ -3,6 +3,7 @@ package aliyun
 import (
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
+	"github.com/aliyun/alibaba-cloud-sdk-go/services/cr"
 	"github.com/aliyun/fc-go-sdk"
 	"net/http"
 	"os"
@@ -28,9 +29,11 @@ type Config struct {
 
 func (c *Config) Client() Client {
 	fcconn, _ := c.newFcClient()
+	crconn, _ := c.newCrClient()
 
 	client := Client{
 		fcconn: fcconn,
+		crconn: crconn,
 	}
 
 	return client
@@ -65,4 +68,8 @@ func (c *Config) newFcClient() (*fc.Client, error) {
 	fcconn, err := fc.NewClient(endpoint, string(ApiVersion20160815), c.AccessKey, c.SecretKey)
 
 	return fcconn, err
+}
+
+func (c *Config) newCrClient() (*cr.Client, error) {
+	return cr.NewClientWithAccessKey(c.RegionId, c.AccessKey, c.SecretKey)
 }

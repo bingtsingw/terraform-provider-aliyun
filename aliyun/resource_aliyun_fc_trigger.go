@@ -109,10 +109,13 @@ func resourceAlicloudFCTriggerDelete(_ context.Context, d *schema.ResourceData, 
 	_, err = conn.DeleteTrigger(request)
 	if err != nil {
 		if IsExpectedErrors(err, []string{"ServiceNotFound", "FunctionNotFound", "TriggerNotFound"}) {
+			d.SetId("")
 			return nil
 		}
 		return diag.FromErr(err)
 	}
+
+	d.SetId("")
 
 	return diags
 }
