@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/cr"
+	"github.com/aliyun/alibaba-cloud-sdk-go/services/dcdn"
 	"github.com/aliyun/fc-go-sdk"
 	"net/http"
 	"os"
@@ -30,10 +31,12 @@ type Config struct {
 func (c *Config) Client() Client {
 	fcconn, _ := c.newFcClient()
 	crconn, _ := c.newCrClient()
+	dcdnconn, _ := c.newDcdnClient()
 
 	client := Client{
-		fcconn: fcconn,
-		crconn: crconn,
+		fcconn:   fcconn,
+		crconn:   crconn,
+		dcdnconn: dcdnconn,
 	}
 
 	return client
@@ -72,4 +75,8 @@ func (c *Config) newFcClient() (*fc.Client, error) {
 
 func (c *Config) newCrClient() (*cr.Client, error) {
 	return cr.NewClientWithAccessKey(c.RegionId, c.AccessKey, c.SecretKey)
+}
+
+func (c *Config) newDcdnClient() (*dcdn.Client, error) {
+	return dcdn.NewClientWithAccessKey(c.RegionId, c.AccessKey, c.SecretKey)
 }

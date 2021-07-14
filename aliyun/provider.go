@@ -33,10 +33,13 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"aliyun_fc_version":        resourceAliyunFCVersion(),
-			"aliyun_fc_trigger":        resourceAliyunFCTrigger(),
-			"aliyun_cr_user_info":      resourceAliyunCRUserInfo(),
-			"aliyun_cr_user_info_auth": resourceAliyunCRUserInfoAuth(),
+			"aliyun_fc_version":         resourceAliyunFCVersion(),
+			"aliyun_fc_trigger":         resourceAliyunFCTrigger(),
+			"aliyun_cr_user_info":       resourceAliyunCRUserInfo(),
+			"aliyun_cr_user_info_auth":  resourceAliyunCRUserInfoAuth(),
+			"aliyun_dcdn_domain":        resourceAliyunDcdnDomain(),
+			"aliyun_dcdn_domain_cert":   resourceAliyunDcdnDomainCert(),
+			"aliyun_dcdn_domain_config": resourceAliyunDcdnDomainConfig(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
