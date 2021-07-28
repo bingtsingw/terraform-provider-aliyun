@@ -5,7 +5,6 @@ import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dcdn"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceAliyunDcdnDomainCert() *schema.Resource {
@@ -24,23 +23,6 @@ func resourceAliyunDcdnDomainCert() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-			},
-			"cert_type": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice([]string{"cas", "free", "upload"}, false),
-			},
-			"ssl_pri": {
-				Type:      schema.TypeString,
-				Optional:  true,
-				ForceNew:  true,
-				Sensitive: true,
-			},
-			"ssl_pub": {
-				Type:      schema.TypeString,
-				Optional:  true,
-				ForceNew:  true,
 			},
 		},
 	}
@@ -71,15 +53,9 @@ func resourceAliyunDcdnDomainCertCreate(ctx context.Context, d *schema.ResourceD
 	request := dcdn.CreateSetDcdnDomainCertificateRequest()
 	request.DomainName = domain
 	request.CertName = d.Get("cert_name").(string)
-	request.CertType = d.Get("cert_type").(string)
+	request.CertType = "cas"
 	request.SSLProtocol = "on"
-	request.ForceSet = "1"
-	if v, ok := d.GetOk("ssl_pub"); ok {
-		request.SSLPub = v.(string)
-	}
-	if v, ok := d.GetOk("ssl_pri"); ok {
-		request.SSLPri = v.(string)
-	}
+	request.ForceSet = "0"
 
 	_, err := conn.SetDcdnDomainCertificate(request)
 	if err != nil {
@@ -107,8 +83,6 @@ func resourceAliyunDcdnDomainCertRead(_ context.Context, d *schema.ResourceData,
 
 	d.Set("domain_name", d.Id())
 	d.Set("cert_name", certInfo.CertName)
-	d.Set("cert_type", certInfo.CertType)
-	d.Set("ssl_pub", certInfo.SSLPub)
 
 	return diags
 }
