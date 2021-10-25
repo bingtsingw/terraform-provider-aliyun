@@ -24,6 +24,16 @@ func resourceAliyunDcdnDomainCert() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
+			"ssl_pub": {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+			},
+			"ssl_pri": {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+			},
 		},
 	}
 }
@@ -53,9 +63,11 @@ func resourceAliyunDcdnDomainCertCreate(ctx context.Context, d *schema.ResourceD
 	request := dcdn.CreateSetDcdnDomainCertificateRequest()
 	request.DomainName = domain
 	request.CertName = d.Get("cert_name").(string)
-	request.CertType = "cas"
+	request.CertType = "upload"
+	request.ForceSet = "1"
 	request.SSLProtocol = "on"
-	request.ForceSet = "0"
+	request.SSLPub = d.Get("ssl_pub").(string)
+	request.SSLPri = d.Get("ssl_pri").(string)
 
 	_, err := conn.SetDcdnDomainCertificate(request)
 	if err != nil {
