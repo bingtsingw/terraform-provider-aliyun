@@ -1,14 +1,6 @@
-TEST?=./...
-GOFMT_FILES?=$$(find . -name '*.go')
-PKG_NAME=aliyun
-BINARY=terraform-provider-${PKG_NAME}
+default: testacc
 
-default: build
-
-build:
-	go build -o bin/${BINARY}
-
-fmt:
-	gofmt -w $(GOFMT_FILES)
-
-.PHONY: build fmt
+# Run acceptance tests
+.PHONY: testacc
+testacc:
+	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m
